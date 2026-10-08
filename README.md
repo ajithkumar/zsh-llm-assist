@@ -8,7 +8,7 @@ A Zsh plugin that brings the power of Large Language Models (LLMs) directly to y
 
 -   **Explain Command (`Ctrl+X` `e`)**: Get a clear, plain-English explanation of the command currently in your buffer.
 -   **Suggest Command (`Ctrl+X` `s`)**: Type what you want to do in natural language, and let the LLM replace it with the correct shell command.
--   **Multi-Provider Support**: Works with `copilot`, `gemini`, `claude`, `codex`, `antigravity`, `grok-build`, and `opencode` CLI tools.
+-   **Multi-Provider Support**: Works with `copilot`, `gemini`, `claude`, `codex`, `antigravity`, `grok-build`, `opencode`, and `pi` CLI tools.
 -   **Non-Blocking UI**: Features a visual loading indicator ("Thinking...", "Suggesting...") that doesn't freeze your shell, powered by `zsh/zselect`.
 -   **Persistent Output**: Explanations and errors are printed above your prompt so they don't vanish when you continue typing.
 
@@ -23,6 +23,7 @@ A Zsh plugin that brings the power of Large Language Models (LLMs) directly to y
 -   **[Google Antigravity CLI](https://antigravity.google/)**: `agy` (the plugin maps `antigravity` -> `agy` by default)
 -   **[Grok Build TUI](https://x.ai/)**: `agent` (the plugin maps `grok-build` -> `agent` by default)
 -   **[OpenCode](https://opencode.ai/)**: `opencode`
+-   **[pi](https://pi.dev/)**: `pi`
 
 ## Installation
 
@@ -80,7 +81,7 @@ You can configure the plugin by setting variables in your `.zshrc`.
 Choose which CLI tool to use. Default is `gemini`.
 
 ```zsh
-export ZSH_LLM_CLI_TOOL="gemini" # Options: copilot, gemini, claude, codex, antigravity, grok-build, opencode
+export ZSH_LLM_CLI_TOOL="gemini" # Options: copilot, gemini, claude, codex, antigravity, grok-build, opencode, pi
 ```
 
 ### Customizing Keyboard Shortcuts
@@ -102,7 +103,12 @@ export ZSH_LLM_CODEX_MODEL="gpt-5.4-mini"
 export ZSH_LLM_ANTIGRAVITY_MODEL="gemini-3.8-flash-low"
 export ZSH_LLM_GROK_BUILD_MODEL="grok-4.7-build-fast"
 export ZSH_LLM_OPENCODE_MODEL="xai/grok-code-fast-1"
+export ZSH_LLM_PI_MODEL="anthropic/claude-haiku-4-5" # empty = pi's default model
 ```
+
+### Reasoning Effort
+Reasoning effort / thinking is fixed to **low** (not configurable) for speed and cost:
+`claude --effort low`, `codex -c model_reasoning_effort="low"`, `pi --thinking low`.
 
 ### Debug Mode
 If things aren't working, enable debug mode to see the exact command being executed and any error messages.

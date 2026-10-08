@@ -4,7 +4,7 @@
 
 zmodload zsh/zselect
 
-# 1. Select the tool to use: "codex", "claude", "antigravity", "grok-build", "gemini", "opencode" or "copilot"
+# 1. Select the tool to use: "codex", "claude", "antigravity", "grok-build", "gemini", "opencode", "copilot" or "pi"
 : ${ZSH_LLM_CLI_TOOL:="gemini"}
 
 # 2. Path to binary (Optional override)
@@ -24,6 +24,11 @@ zmodload zsh/zselect
 : ${ZSH_LLM_GROK_BUILD_MODEL:="grok-4.7-build-fast"}
 : ${ZSH_LLM_COPILOT_MODEL:="claude-haiku-4.5"}
 : ${ZSH_LLM_OPENCODE_MODEL:="xai/grok-code-fast-1"}
+# pi: empty = use pi's own default model (accepts "provider/id" and "id:thinking")
+: ${ZSH_LLM_PI_MODEL=}
+
+# Note: reasoning effort / thinking is fixed to "low" for claude, codex and pi
+# (hardcoded below) to keep responses fast and cheap.
 
 # ------------------------------------------------------------------------------
 # System Prompts (Bulletproofed)
@@ -109,11 +114,11 @@ _llm_call_provider() {
             ;;
         claude)
             model="$ZSH_LLM_CLAUDE_MODEL"
-            cmd_args+=("--model" "$model" "--print" "--output-format" "text" "--dangerously-skip-permissions" "$prompt")
+            cmd_args+=("--model" "$model" "--effort" "low" "--print" "--output-format" "text" "--dangerously-skip-permissions" "$prompt")
             ;;
         codex)
             model="$ZSH_LLM_CODEX_MODEL"
-            cmd_args+=("exec" "-m" "$model" "--dangerously-bypass-approvals-and-sandbox" "--dangerously-bypass-hook-trust" "$prompt")
+            cmd_args+=("exec" "-m" "$model" "-c" "model_reasoning_effort=\"low\"" "--dangerously-bypass-approvals-and-sandbox" "--dangerously-bypass-hook-trust" "$prompt")
             ;;
         antigravity)
             model="$ZSH_LLM_ANTIGRAVITY_MODEL"
@@ -122,6 +127,13 @@ _llm_call_provider() {
         grok-build)
             model="$ZSH_LLM_GROK_BUILD_MODEL"
             cmd_args+=("-p" "$prompt" "--output-format" "plain" "--permission-mode" "bypassPermissions" "--model" "$model")
+            ;;
+        pi)
+            model="$ZSH_LLM_PI_MODEL"
+            cmd_args+=("--print" "--no-session")
+            [[ -n "$model" ]] && cmd_args+=("--model" "$model")
+            cmd_args+=("--thinking" "low")
+            cmd_args+=("$prompt")
             ;;
         opencode)
             model="$ZSH_LLM_OPENCODE_MODEL"
